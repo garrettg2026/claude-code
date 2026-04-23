@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm Bureau Benefits Discovery</title>
+</head>
+<body>
+    <h1>Farm Bureau Benefits Discovery Application</h1>
+    <form id="prospectForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <label for="phone">Phone:</label>
+        <input type="tel" id="phone" name="phone"><br><br>
+
+        <label for="zip">Zip Code:</label>
+        <input type="text" id="zip" name="zip" required><br><br>
+
+        <input type="submit" value="Generate Benefit Report">
+    </form>
+
+    <h2>Your Personalized Benefit Report</h2>
+    <div id="reportOutput"></div>
+
+    <button id="downloadCSV">Download Prospect List as CSV</button>
+
+    <script>
+        document.getElementById('prospectForm').addEventListener('submit', function(event){
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const zip = document.getElementById('zip').value;
+
+            // Logic to generate personalized benefit report based on collected info
+            const report = `Benefit report for ${name} (Email: ${email}, Phone: ${phone}, Zip: ${zip})`; // Placeholder
+            document.getElementById('reportOutput').innerText = report;
+        });
+
+        document.getElementById('downloadCSV').addEventListener('click', function(){
+            // Logic to download prospect list as CSV
+            const csvContent = 'data:text/csv;charset=utf-8,Name,Email,Phone,Zip\n' +
+                document.getElementById('name').value + ',' + 
+                document.getElementById('email').value + ',' + 
+                document.getElementById('phone').value + ',' + 
+                document.getElementById('zip').value + '\n';
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement('a');
+            link.setAttribute('href', encodedUri);
+            link.setAttribute('download', 'prospect_list.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    </script>
+</body>
+</html>
