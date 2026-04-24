@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 
 const SCHEDULE_LINK = "https://calendly.com/YOUR-LINK";
 const MEMBER_LINK   = "https://www.lafarmbureau.org/join";
+const QUOTE_LINK    = "https://apps.sfbcic.com/quote-and-buy/?stateCode=LA&producerCode=35762&";
 
 const AGENT = {
   name:  "Garrett Gardner",
@@ -14,6 +15,7 @@ const AGENT = {
 type Message = {
   role: "user" | "assistant";
   content: string;
+  type?: "cta";
 };
 
 function renderContent(text: string) {
@@ -27,7 +29,7 @@ export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [showBookCta, setShowBookCta] = useState(false);
+  const [ctaInjected, setCtaInjected] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -35,13 +37,20 @@ export default function Home() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
 
+  // Inject CTA card into the chat after the benefits snapshot is delivered
   useEffect(() => {
-    if (messages.length >= 8) setShowBookCta(true);
-  }, [messages.length]);
+    if (messages.length >= 8 && !isLoading && !ctaInjected) {
+      setCtaInjected(true);
+      setMessages((prev) => [...prev, { role: "assistant", content: "", type: "cta" }]);
+    }
+  }, [messages.length, isLoading, ctaInjected]);
 
   async function streamResponse(msgs: Message[]) {
     setIsLoading(true);
     let assistantText = "";
+
+    // Strip CTA messages before sending to the API
+    const apiMessages = msgs.filter((m) => m.type !== "cta");
 
     setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
 
@@ -49,7 +58,7 @@ export default function Home() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: msgs }),
+        body: JSON.stringify({ messages: apiMessages }),
       });
 
       if (!res.ok) throw new Error("API error");
@@ -114,7 +123,8 @@ export default function Home() {
     isLoading &&
     messages.length > 0 &&
     messages[messages.length - 1]?.role === "assistant" &&
-    messages[messages.length - 1]?.content === "";
+    messages[messages.length - 1]?.content === "" &&
+    messages[messages.length - 1]?.type !== "cta";
 
   return (
     <>
@@ -173,15 +183,39 @@ export default function Home() {
           </div>
 
           <div id="messages">
-            {messages.map((msg, i) => (
-              <div key={i} className={`msg ${msg.role === "user" ? "user" : "bot"}`}>
-                <div className="msg-avatar">{msg.role === "user" ? "👤" : "FB"}</div>
-                <div
-                  className="msg-bubble"
-                  dangerouslySetInnerHTML={{ __html: renderContent(msg.content) }}
-                />
-              </div>
-            ))}
+            {messages.map((msg, i) => {
+              if (msg.type === "cta") {
+                return (
+                  <div key={i} className="msg bot">
+                    <div className="msg-avatar">FB</div>
+                    <div className="inline-cta">
+                      <p className="inline-cta-heading">Ready to take the next step?</p>
+                      <p className="inline-cta-sub">Garrett can review your coverage, get you a quote, or just answer questions — no pressure.</p>
+                      <div className="inline-cta-btns">
+                        <a href={QUOTE_LINK} target="_blank" rel="noopener noreferrer" className="inline-btn primary">
+                          🛡️ Get a Quote
+                        </a>
+                        <a href={`tel:${AGENT.phone.replace(/\D/g, "")}`} className="inline-btn secondary">
+                          📞 Call Garrett
+                        </a>
+                        <a href={`mailto:${AGENT.email}`} className="inline-btn secondary">
+                          ✉️ Email Garrett
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+              return (
+                <div key={i} className={`msg ${msg.role === "user" ? "user" : "bot"}`}>
+                  <div className="msg-avatar">{msg.role === "user" ? "👤" : "FB"}</div>
+                  <div
+                    className="msg-bubble"
+                    dangerouslySetInnerHTML={{ __html: renderContent(msg.content) }}
+                  />
+                </div>
+              );
+            })}
             {showTyping && (
               <div className="msg bot">
                 <div className="msg-avatar">FB</div>
@@ -223,31 +257,12 @@ export default function Home() {
             <a href="/schedule" className="member-btn">
               📅 Schedule a Review
             </a>
-            <a href="https://apps.sfbcic.com/quote-and-buy/?stateCode=LA&producerCode=35762&" target="_blank" rel="noopener noreferrer" className="member-btn">
-              🛡️ Get a Quote
-            </a>
+            {!ctaInjected && (
+              <a href={QUOTE_LINK} target="_blank" rel="noopener noreferrer" className="member-btn">
+                🛡️ Get a Quote
+              </a>
+            )}
           </div>
-
-          {showBookCta && (
-            <div className="book-cta">
-              <h4>Ready to button up your portfolio?</h4>
-              <p>
-                Garrett offers free 15-minute portfolio reviews for all Farm Bureau members
-                and prospects — no obligation, no pressure.
-              </p>
-              <div className="book-cta-btns">
-                <a href="https://apps.sfbcic.com/quote-and-buy/?stateCode=LA&producerCode=35762&" target="_blank" rel="noopener noreferrer" className="book-btn primary">
-                  🛡️ Get a Quote
-                </a>
-                <a href={`tel:${AGENT.phone.replace(/\D/g, "")}`} className="book-btn secondary">
-                  📞 Call Garrett
-                </a>
-                <a href={`mailto:${AGENT.email}`} className="book-btn secondary">
-                  ✉️ Email Garrett
-                </a>
-              </div>
-            </div>
-          )}
         </section>
       )}
 

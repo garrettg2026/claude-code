@@ -197,6 +197,33 @@ header {
   transition: all 0.2s; display: inline-block;
 }
 .member-btn:hover { background: var(--green-pale); border-color: var(--green-dark); }
+
+/* Inline CTA card in chat */
+.inline-cta {
+  background: linear-gradient(135deg, var(--green-dark), var(--green-mid));
+  border-radius: 14px; border-top-left-radius: 4px;
+  padding: 16px 18px; max-width: 78%;
+  animation: fadeUp 0.35s ease both;
+}
+.inline-cta-heading {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px; font-weight: 700;
+  color: var(--white); margin-bottom: 4px;
+}
+.inline-cta-sub {
+  font-size: 13px; color: var(--green-pale);
+  font-weight: 300; margin-bottom: 14px; line-height: 1.5;
+}
+.inline-cta-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+.inline-btn {
+  padding: 9px 16px; border-radius: 6px; font-size: 13px;
+  font-weight: 600; text-decoration: none; display: inline-block;
+  transition: all 0.2s; border: none; cursor: pointer;
+}
+.inline-btn.primary { background: var(--gold); color: var(--green-dark); }
+.inline-btn.primary:hover { background: var(--gold-light); }
+.inline-btn.secondary { background: transparent; color: var(--white); border: 1.5px solid rgba(255,255,255,0.4); }
+.inline-btn.secondary:hover { border-color: var(--white); background: rgba(255,255,255,0.1); }
 .book-cta {
   background: linear-gradient(135deg, var(--green-dark), var(--green-mid));
   border-radius: 10px; padding: 20px; margin-top: 12px;
