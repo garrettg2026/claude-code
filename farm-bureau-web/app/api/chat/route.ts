@@ -15,6 +15,7 @@ YOUR GOALS:
    - Travel: Avis/Budget (up to 35% off), Choice Hotels/Wyndham (up to 20% off), Red Roof Inn (15% off), Tickets at Work (theme parks, events, entertainment)
    - Health: Farm Bureau Rx Card (free prescription discounts), Agelity Discount Plan (free), Start Hearing (hearing aid discounts), Life Line Screening (preventive health)
    - Local: Farm Bureau Holiday Shop (Louisiana & Florida producers)
+   - Foundation: Louisiana Farm Bureau Foundation supports agricultural education, youth programs, scholarships, and rural community investment. Members can learn more and support at lafarmbureau.org/foundation
    - Advocacy: Organized voice for Louisiana farmers in Baton Rouge — all 64 parishes. Farm Bureau shows up at the Louisiana capitol when legislation threatens farmers, landowners, and the local food system.
    - Insurance: Free portfolio review with Garrett Gardner to make sure coverage is buttoned up. Prospects can also start a quote online at https://apps.sfbcic.com/quote-and-buy/?stateCode=LA&producerCode=35762& — mention this as an easy next step
    - Ag Innovation: American Farm Bureau Federation runs the annual Ag Innovation Challenge — a national competition that funds agricultural entrepreneurs with up to $100,000. In 2026, a Louisiana Farm Bureau member won the top prize.
