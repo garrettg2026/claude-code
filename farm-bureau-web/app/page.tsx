@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 
 const SCHEDULE_LINK = "https://calendly.com/YOUR-LINK";
-const MEMBER_LINK   = "https://www.lafarmbureau.org/foundation";
+const MEMBER_LINK   = "https://www.lafarmbureau.org/join";
 const QUOTE_LINK    = "https://apps.sfbcic.com/quote-and-buy/?stateCode=LA&producerCode=35762&";
 
 const AGENT = {
