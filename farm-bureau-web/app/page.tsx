@@ -233,11 +233,14 @@ export default function Home() {
                 and prospects — no obligation, no pressure.
               </p>
               <div className="book-cta-btns">
-                <a href={`tel:${AGENT.phone.replace(/\D/g, "")}`} className="book-btn primary">
-                  📞 Call Garrett Now
+                <a href="https://apps.sfbcic.com/quote-and-buy/?stateCode=LA&producerCode=35762&" target="_blank" rel="noopener noreferrer" className="book-btn primary">
+                  🛡️ Get a Quote
+                </a>
+                <a href={`tel:${AGENT.phone.replace(/\D/g, "")}`} className="book-btn secondary">
+                  📞 Call Garrett
                 </a>
                 <a href={`mailto:${AGENT.email}`} className="book-btn secondary">
-                  ✉️ Send an Email
+                  ✉️ Email Garrett
                 </a>
               </div>
             </div>
