@@ -3,6 +3,9 @@
 import { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 
+const SCHEDULE_LINK = "https://calendly.com/YOUR-LINK";
+const MEMBER_LINK   = "https://www.lafarmbureau.org/join";
+
 type Message = {
   role: "user" | "assistant";
   content: string;
@@ -227,6 +230,23 @@ export default function Home() {
               ))}
               <div ref={bottomRef} />
             </div>
+
+            {/* Become a Member banner */}
+            {messages.length > 0 && !isLoading && (
+              <div className="flex justify-center mb-3">
+                <a
+                  href={MEMBER_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-fb-green-600 hover:bg-fb-green-700 text-white font-semibold px-6 py-2.5 rounded-full shadow transition-colors text-sm"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                  </svg>
+                  Become a Member
+                </a>
+              </div>
+            )}
 
             {/* Input area */}
             <div className="sticky bottom-0 bg-gray-50 pt-2 pb-4">
