@@ -223,6 +223,9 @@ export default function Home() {
             <a href="/schedule" className="member-btn">
               📅 Schedule a Review
             </a>
+            <a href="https://apps.sfbcic.com/quote-and-buy/?stateCode=LA&producerCode=35762&" target="_blank" rel="noopener noreferrer" className="member-btn">
+              🛡️ Get a Quote
+            </a>
           </div>
 
           {showBookCta && (
