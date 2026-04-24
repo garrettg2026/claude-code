@@ -220,6 +220,9 @@ export default function Home() {
             <a href={MEMBER_LINK} target="_blank" rel="noopener noreferrer" className="member-btn">
               🌾 Become a Member
             </a>
+            <a href="/schedule" className="member-btn">
+              📅 Schedule a Review
+            </a>
           </div>
 
           {showBookCta && (
