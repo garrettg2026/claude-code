@@ -51,6 +51,7 @@ export async function POST(req: Request) {
 
   const readable = new ReadableStream({
     async start(controller) {
+      let closed = false;
       try {
         for await (const event of stream) {
           if (
@@ -61,9 +62,12 @@ export async function POST(req: Request) {
           }
         }
       } catch (err) {
-        controller.error(err);
-      } finally {
+        const msg = "\n\n*(Connection interrupted — please try again or call Garrett at (225) 766-6565.)*";
+        controller.enqueue(encoder.encode(msg));
+        closed = true;
         controller.close();
+      } finally {
+        if (!closed) controller.close();
       }
     },
   });
