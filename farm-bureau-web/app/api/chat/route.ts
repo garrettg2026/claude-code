@@ -1,6 +1,11 @@
 import Anthropic from "@anthropic-ai/sdk";
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+export const maxDuration = 300;
+
+const client = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY,
+  timeout: 300 * 1000,
+});
 
 const SYSTEM_PROMPT = `You are a friendly, knowledgeable benefits assistant for Louisiana Farm Bureau, working alongside Garrett Gardner, a licensed Louisiana Farm Bureau Insurance Agent (phone: (225) 766-6565, email: ggardner@sfbcic.com).
 
