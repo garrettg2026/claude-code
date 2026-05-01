@@ -6,6 +6,7 @@
 <title>Garrett Gardner | Insurance Consultation</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <style>
 :root {
   --green-deep:  #0F2E1A;
@@ -16,6 +17,7 @@
   --green-mist:  #F0F7F2;
   --gold:        #C9882A;
   --gold-light:  #F6E4C0;
+  --gold-pale:   #FEF9EE;
   --cream:       #FDFAF5;
   --white:       #FFFFFF;
   --text:        #1A2E1A;
@@ -24,6 +26,7 @@
   --border:      rgba(27,67,50,0.12);
   --shadow-sm:   0 2px 12px rgba(15,46,26,0.08);
   --shadow-md:   0 8px 32px rgba(15,46,26,0.12);
+  --shadow-lg:   0 20px 60px rgba(15,46,26,0.18);
   --radius:      14px;
   --radius-sm:   8px;
 }
@@ -37,9 +40,10 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
 }
 
-/* HEADER */
+/* ── HEADER ── */
 header {
   background: var(--green-deep);
   padding: 0 2rem;
@@ -49,7 +53,7 @@ header {
   justify-content: space-between;
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 200;
   box-shadow: 0 2px 20px rgba(0,0,0,0.3);
 }
 
@@ -74,18 +78,31 @@ header {
   font-weight: 300; letter-spacing: 0.8px; text-transform: uppercase; margin-top: 1px;
 }
 
-.cta-btn {
+.schedule-btn {
   display: inline-flex; align-items: center; gap: 7px;
   background: var(--gold); color: var(--white);
   font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
   padding: 9px 18px; border-radius: 100px; border: none;
   cursor: pointer; text-decoration: none; white-space: nowrap;
-  transition: background 0.2s, transform 0.2s;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
   box-shadow: 0 2px 12px rgba(201,136,42,0.4);
 }
-.cta-btn:hover { background: #B07720; transform: translateY(-1px); }
+.schedule-btn:hover { background: #B07720; transform: translateY(-1px); box-shadow: 0 4px 18px rgba(201,136,42,0.5); }
 
-/* HERO */
+/* ── FLOATING BUTTON ── */
+.schedule-float {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  z-index: 300;
+  animation: floatIn 0.6s 0.5s ease both;
+}
+
+@keyframes floatIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.9); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── HERO ── */
 .hero {
   background: linear-gradient(160deg, var(--green-deep) 0%, var(--green-dark) 60%, var(--green-mid) 100%);
   padding: 4.5rem 2rem 5rem;
@@ -99,13 +116,14 @@ header {
   position: absolute; inset: 0;
   background:
     radial-gradient(ellipse 70% 50% at 15% 50%, rgba(82,183,136,0.12) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 70% at 85% 30%, rgba(201,136,42,0.08) 0%, transparent 50%);
+    radial-gradient(ellipse 50% 70% at 85% 30%, rgba(201,136,42,0.08) 0%, transparent 50%),
+    repeating-linear-gradient(170deg, transparent, transparent 40px, rgba(255,255,255,0.015) 40px, rgba(255,255,255,0.015) 41px);
   pointer-events: none;
 }
 
 .hero-inner {
   position: relative; z-index: 1;
-  max-width: 620px; margin: 0 auto;
+  max-width: 640px; margin: 0 auto;
   animation: fadeUp 0.8s ease both;
 }
 
@@ -117,7 +135,6 @@ header {
   letter-spacing: 1.2px; text-transform: uppercase;
   padding: 6px 16px; border-radius: 100px; margin-bottom: 1.5rem;
 }
-
 .hero-badge::before {
   content: ''; width: 6px; height: 6px;
   background: var(--green-light); border-radius: 50%;
@@ -134,14 +151,11 @@ header {
 
 .hero p {
   font-size: 17px; color: rgba(255,255,255,0.7);
-  line-height: 1.7; font-weight: 300;
-  margin-bottom: 2.5rem;
+  line-height: 1.7; font-weight: 300; margin-bottom: 2.5rem;
   max-width: 480px; margin-left: auto; margin-right: auto;
 }
 
-.hero-actions {
-  display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
-}
+.hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
 .btn-primary {
   display: inline-flex; align-items: center; gap: 8px;
@@ -149,10 +163,9 @@ header {
   font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
   padding: 14px 28px; border-radius: var(--radius);
   border: none; cursor: pointer; text-decoration: none;
-  transition: all 0.25s;
-  box-shadow: 0 4px 16px rgba(82,183,136,0.3);
+  transition: all 0.25s; box-shadow: 0 4px 16px rgba(82,183,136,0.3);
 }
-.btn-primary:hover { background: #3DA870; transform: translateY(-2px); }
+.btn-primary:hover { background: #3DA870; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(82,183,136,0.4); }
 
 .btn-outline {
   display: inline-flex; align-items: center; gap: 8px;
@@ -164,7 +177,7 @@ header {
 }
 .btn-outline:hover { border-color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.06); }
 
-/* SECTION */
+/* ── SECTION ── */
 .section { padding: 4rem 2rem; max-width: 900px; margin: 0 auto; width: 100%; }
 
 .section-label {
@@ -183,7 +196,7 @@ header {
   max-width: 560px; margin-bottom: 2.5rem;
 }
 
-/* COVERAGE CARDS */
+/* ── COVERAGE CARDS ── */
 .coverage-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -191,66 +204,137 @@ header {
 }
 
 .coverage-card {
-  background: var(--white);
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px 16px;
-  text-align: center;
-  box-shadow: var(--shadow-sm);
-  transition: transform 0.2s, box-shadow 0.2s;
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 20px 16px; text-align: center;
+  cursor: pointer; box-shadow: var(--shadow-sm);
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s, background 0.2s;
+  position: relative;
 }
-.coverage-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.coverage-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--green-mid); }
+.coverage-card.selected { border-color: var(--green-mid); background: var(--green-mist); box-shadow: 0 0 0 3px rgba(45,106,79,0.15); }
+
+.coverage-card .check {
+  position: absolute; top: 12px; right: 12px;
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.coverage-card.selected .check { background: var(--green-mid); border-color: var(--green-mid); }
+.coverage-card.selected .check::after {
+  content: '';
+  width: 9px; height: 5px;
+  border-left: 2px solid white; border-bottom: 2px solid white;
+  transform: rotate(-45deg) translateY(-1px); display: block;
+}
 
 .card-icon { font-size: 30px; margin-bottom: 10px; }
-.card-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 17px; font-weight: 600; color: var(--green-deep); margin-bottom: 4px;
-}
+.card-title { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 600; color: var(--green-deep); margin-bottom: 4px; }
 .card-desc { font-size: 12px; color: var(--text-mid); line-height: 1.5; font-weight: 300; }
 
-/* CONTACT STRIP */
-.contact-strip {
-  background: var(--green-dark);
-  padding: 3rem 2rem;
-  text-align: center;
-}
-.contact-strip h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(1.8rem, 4vw, 2.4rem);
-  font-weight: 700; color: var(--white); margin-bottom: 0.75rem;
-}
-.contact-strip p {
-  font-size: 16px; color: rgba(255,255,255,0.65);
-  font-weight: 300; margin-bottom: 2rem;
-}
-.contact-btns {
-  display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
-}
-.contact-btns a {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
-  padding: 14px 28px; border-radius: var(--radius);
-  text-decoration: none; transition: all 0.25s;
-}
-.btn-call {
-  background: var(--green-light); color: var(--green-deep);
-  box-shadow: 0 4px 16px rgba(82,183,136,0.3);
-}
-.btn-call:hover { background: #3DA870; transform: translateY(-2px); }
-.btn-text {
-  background: var(--gold); color: var(--white);
-  box-shadow: 0 4px 16px rgba(201,136,42,0.3);
-}
-.btn-text:hover { background: #B07720; transform: translateY(-2px); }
-.btn-quote {
-  background: transparent; color: var(--white);
-  border: 1.5px solid rgba(255,255,255,0.35);
-}
-.btn-quote:hover { border-color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.06); }
+/* ── CHAT SECTION ── */
+.chat-section { background: var(--green-deep); padding: 3rem 0 0; }
+.chat-section .section { padding: 0 2rem; }
+.chat-section .section-label { color: var(--gold); }
+.chat-section .section-title { color: var(--white); }
+.chat-section .section-sub { color: rgba(255,255,255,0.6); }
 
-/* CONTACT FORM */
+.chat-container {
+  background: var(--white); border-radius: var(--radius) var(--radius) 0 0;
+  overflow: hidden; box-shadow: var(--shadow-lg);
+  max-width: 700px; margin: 0 auto;
+  display: flex; flex-direction: column;
+}
+
+.chat-topbar {
+  background: var(--green-dark); padding: 14px 20px;
+  display: flex; align-items: center; gap: 12px;
+}
+.chat-topbar .avatar {
+  width: 36px; height: 36px; border-radius: 50%; background: var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif; font-weight: 700; color: white; font-size: 14px; flex-shrink: 0;
+}
+.chat-topbar-info h4 { font-size: 14px; font-weight: 600; color: var(--white); line-height: 1.1; }
+.chat-topbar-info p { font-size: 11px; color: var(--green-pale); font-weight: 300; }
+.online-dot { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; margin-left: auto; animation: pulse 2s ease-in-out infinite; }
+
+.chat-messages {
+  height: 380px; overflow-y: auto; padding: 20px;
+  display: flex; flex-direction: column; gap: 14px;
+  scroll-behavior: smooth; background: #FAFCFA;
+}
+
+.msg { display: flex; gap: 8px; animation: fadeUp 0.35s ease both; }
+.msg.user { flex-direction: row-reverse; }
+
+.msg-av {
+  width: 32px; height: 32px; border-radius: 50%; background: var(--green-dark);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif; font-weight: 700; color: white; font-size: 12px;
+  flex-shrink: 0; margin-top: 2px;
+}
+.msg.user .msg-av { background: var(--gold); }
+
+.msg-bubble {
+  max-width: 80%; padding: 12px 16px; border-radius: 16px; border-top-left-radius: 4px;
+  font-size: 14px; line-height: 1.65; color: var(--text);
+  background: var(--white); border: 1.5px solid var(--border); box-shadow: var(--shadow-sm);
+}
+.msg.user .msg-bubble {
+  background: var(--green-dark); color: var(--white);
+  border-color: transparent; border-top-left-radius: 16px; border-top-right-radius: 4px; box-shadow: none;
+}
+.msg-bubble strong { color: var(--green-dark); font-weight: 600; }
+.msg.user .msg-bubble strong { color: var(--gold-light); }
+
+.typing-wrap { display: flex; gap: 8px; align-items: flex-start; }
+.typing-dots {
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: 16px; border-top-left-radius: 4px;
+  padding: 14px 18px; display: flex; gap: 5px; align-items: center;
+}
+.typing-dots span {
+  width: 7px; height: 7px; background: var(--green-light); border-radius: 50%;
+  animation: bounce 1.2s infinite;
+}
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 0 8px; }
+.chip {
+  background: var(--green-mist); border: 1.5px solid rgba(45,106,79,0.2);
+  color: var(--green-dark); font-size: 12px; font-weight: 500;
+  padding: 6px 14px; border-radius: 100px; cursor: pointer;
+  transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+}
+.chip:hover { background: var(--green-dark); color: white; border-color: transparent; }
+
+.chat-input-wrap {
+  padding: 14px 16px; border-top: 1.5px solid var(--border);
+  display: flex; gap: 10px; align-items: flex-end; background: var(--white);
+}
+
+#chat-input {
+  flex: 1; border: 1.5px solid rgba(27,67,50,0.15); border-radius: var(--radius-sm);
+  padding: 11px 14px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text);
+  resize: none; min-height: 44px; max-height: 110px;
+  outline: none; transition: border-color 0.2s; line-height: 1.5; background: #FAFCFA;
+}
+#chat-input:focus { border-color: var(--green-mid); }
+#chat-input::placeholder { color: var(--text-light); }
+
+.send-btn {
+  width: 44px; height: 44px; background: var(--green-dark); border: none;
+  border-radius: var(--radius-sm); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  transition: all 0.2s; box-shadow: 0 2px 8px rgba(27,67,50,0.3);
+}
+.send-btn:hover { background: var(--green-mid); transform: scale(1.05); }
+.send-btn:disabled { background: var(--text-light); cursor: not-allowed; transform: none; }
+
+/* ── CONTACT FORM ── */
 .form-section { background: var(--green-mist); }
-
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
 .form-group { display: flex; flex-direction: column; gap: 6px; }
 .form-group.full { grid-column: 1 / -1; }
@@ -267,8 +351,7 @@ input, select, textarea {
   outline: none; transition: border-color 0.2s, box-shadow 0.2s; width: 100%;
 }
 input:focus, select:focus, textarea:focus {
-  border-color: var(--green-mid);
-  box-shadow: 0 0 0 3px rgba(45,106,79,0.1);
+  border-color: var(--green-mid); box-shadow: 0 0 0 3px rgba(45,106,79,0.1);
 }
 textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
 select {
@@ -285,12 +368,8 @@ select {
   cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text-mid);
   user-select: none; transition: all 0.2s;
 }
-.cb-item input[type="checkbox"] {
-  width: 16px; height: 16px; cursor: pointer; accent-color: var(--green-mid); margin: 0; padding: 0;
-}
-.cb-item:has(input:checked) {
-  background: var(--green-mist); border-color: var(--green-mid); color: var(--green-deep);
-}
+.cb-item input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--green-mid); margin: 0; padding: 0; }
+.cb-item:has(input:checked) { background: var(--green-mist); border-color: var(--green-mid); color: var(--green-deep); }
 
 .submit-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 10px;
@@ -302,34 +381,135 @@ select {
 }
 .submit-btn:hover { background: var(--green-mid); transform: translateY(-2px); }
 
-.form-note {
-  font-size: 12px; color: var(--text-light);
-  text-align: center; margin-top: 10px;
+.form-note { font-size: 12px; color: var(--text-light); text-align: center; margin-top: 10px; }
+
+/* ── BOOKING MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(15,46,26,0.75); backdrop-filter: blur(6px);
+  z-index: 400; display: none;
+  align-items: center; justify-content: center; padding: 1rem;
+}
+.modal-overlay.open { display: flex; animation: fadeIn 0.25s ease; }
+
+.modal {
+  background: var(--white); border-radius: 20px;
+  width: 100%; max-width: 520px;
+  box-shadow: var(--shadow-lg); overflow: hidden;
+  animation: slideUp 0.35s ease both;
+  max-height: 90vh; overflow-y: auto;
 }
 
-/* DIVIDER */
-.divider {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--border), transparent);
-  margin: 0 2rem;
+.modal-header {
+  background: var(--green-dark); padding: 20px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.modal-header h3 { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 700; color: var(--white); }
+.modal-header p { font-size: 13px; color: var(--green-pale); margin-top: 2px; font-weight: 300; }
+
+.modal-close {
+  background: rgba(255,255,255,0.15); border: none; border-radius: 8px;
+  width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: white; font-size: 20px; transition: background 0.2s; flex-shrink: 0;
+}
+.modal-close:hover { background: rgba(255,255,255,0.25); }
+
+.modal-body { padding: 24px; }
+
+.cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.cal-nav h4 { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; color: var(--green-deep); }
+
+.cal-arrow {
+  background: var(--green-mist); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.2s; color: var(--green-dark); font-size: 18px;
+}
+.cal-arrow:hover { background: var(--green-dark); color: white; border-color: var(--green-dark); }
+
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 20px; }
+
+.cal-day-label {
+  text-align: center; font-size: 11px; font-weight: 600;
+  color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; padding: 4px 0 8px;
 }
 
-/* FOOTER */
+.cal-day {
+  aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-sm); font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all 0.18s; color: var(--text);
+  border: 1.5px solid transparent; position: relative;
+}
+.cal-day:hover:not(.disabled):not(.empty) { background: var(--green-mist); border-color: var(--green-mid); }
+.cal-day.today { font-weight: 700; color: var(--green-mid); }
+.cal-day.today::after { content: ''; position: absolute; bottom: 3px; width: 4px; height: 4px; background: var(--green-light); border-radius: 50%; }
+.cal-day.selected { background: var(--green-dark); color: white; border-color: var(--green-dark); }
+.cal-day.disabled { color: #D0D8D0; cursor: not-allowed; }
+.cal-day.empty { cursor: default; }
+
+.time-section { margin-top: 4px; }
+.time-label { font-size: 12px; font-weight: 600; color: var(--text-mid); text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 10px; }
+.time-slots { display: flex; flex-direction: column; gap: 8px; }
+
+.time-slot {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--green-mist); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); padding: 12px 16px;
+  cursor: pointer; transition: all 0.2s;
+}
+.time-slot:hover { border-color: var(--green-mid); background: var(--green-pale); }
+.time-slot.selected { background: var(--green-dark); border-color: var(--green-dark); color: white; }
+
+.time-slot-info { display: flex; flex-direction: column; }
+.time-slot-time { font-size: 15px; font-weight: 600; color: var(--green-deep); }
+.time-slot.selected .time-slot-time { color: white; }
+.time-slot-type { font-size: 11px; color: var(--text-light); margin-top: 2px; font-weight: 300; }
+.time-slot.selected .time-slot-type { color: rgba(255,255,255,0.7); }
+
+.slot-badge { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 100px; background: rgba(201,136,42,0.15); color: var(--gold); text-transform: uppercase; letter-spacing: 0.5px; }
+.time-slot.selected .slot-badge { background: rgba(255,255,255,0.2); color: white; }
+
+.booking-form { margin-top: 20px; display: none; animation: fadeUp 0.3s ease both; }
+.booking-form.show { display: block; }
+.booking-form h4 { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; color: var(--green-deep); margin-bottom: 16px; }
+
+.booking-summary {
+  background: var(--green-mist); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); padding: 12px 16px; margin-bottom: 16px;
+  font-size: 14px; color: var(--text-mid); font-weight: 500;
+}
+.booking-summary strong { color: var(--green-deep); }
+
+.book-submit {
+  width: 100%; background: var(--gold); color: white; border: none;
+  border-radius: var(--radius-sm); padding: 14px;
+  font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; box-shadow: 0 3px 12px rgba(201,136,42,0.35);
+}
+.book-submit:hover { background: #B07720; transform: translateY(-1px); }
+
+.booking-success { text-align: center; padding: 20px 0; display: none; }
+.booking-success.show { display: block; }
+.booking-success .success-icon { font-size: 48px; margin-bottom: 12px; }
+.booking-success h4 { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 700; color: var(--green-deep); margin-bottom: 8px; }
+.booking-success p { font-size: 14px; color: var(--text-mid); line-height: 1.6; font-weight: 300; }
+
+/* ── DIVIDER ── */
+.divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 0 2rem; }
+
+/* ── FOOTER ── */
 footer {
-  background: var(--green-deep);
-  padding: 28px 2rem;
-  text-align: center;
-  border-top: 2px solid var(--gold);
-  margin-top: auto;
+  background: var(--green-deep); padding: 28px 2rem;
+  text-align: center; border-top: 2px solid var(--gold); margin-top: auto;
 }
 footer p { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.8; }
 footer strong { color: rgba(255,255,255,0.9); }
 footer a { color: var(--gold); text-decoration: none; font-weight: 500; }
 footer a:hover { color: var(--gold-light); }
 
-/* TOAST */
+/* ── TOAST ── */
 .toast {
-  position: fixed; bottom: 24px; right: 24px;
+  position: fixed; bottom: 90px; right: 24px;
   background: var(--green-dark); color: white;
   padding: 12px 20px; border-radius: var(--radius-sm);
   font-size: 14px; font-weight: 500; z-index: 500;
@@ -339,24 +519,35 @@ footer a:hover { color: var(--gold-light); }
 }
 .toast.show { transform: translateY(0); opacity: 1; }
 
-/* ANIMATIONS */
+/* ── ANIMATIONS ── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 @keyframes pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
   50%       { opacity: 0.5; transform: scale(0.8); }
 }
+@keyframes bounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30%            { transform: translateY(-6px); }
+}
 
-/* RESPONSIVE */
+/* ── RESPONSIVE ── */
 @media (max-width: 600px) {
   header { padding: 0 1rem; }
   .hero { padding: 3rem 1.5rem 4rem; }
   .section { padding: 2.5rem 1.5rem; }
   .form-grid { grid-template-columns: 1fr; }
+  .schedule-float { bottom: 16px; right: 16px; }
+  .modal { border-radius: 16px 16px 0 0; margin-bottom: 0; align-self: flex-end; }
+  .modal-overlay { align-items: flex-end; }
   .hero-actions { flex-direction: column; align-items: center; }
-  .contact-btns { flex-direction: column; align-items: center; }
 }
 </style>
 </head>
@@ -371,11 +562,21 @@ footer a:hover { color: var(--gold-light); }
       <div class="header-title">Louisiana Farm Bureau Insurance</div>
     </div>
   </div>
-  <a href="tel:2257666565" class="cta-btn">
-    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.9 10.82 19.79 19.79 0 01.87 2.18 2 2 0 012.86 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-    Call Garrett
-  </a>
+  <button class="schedule-btn" onclick="openModal()">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+    Schedule a Review
+  </button>
 </header>
+
+<!-- FLOATING SCHEDULE BUTTON -->
+<div class="schedule-float">
+  <button class="schedule-btn" onclick="openModal()">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+    Schedule a Review
+  </button>
+</div>
+
+<main>
 
 <!-- HERO -->
 <section class="hero">
@@ -384,47 +585,52 @@ footer a:hover { color: var(--gold-light); }
     <h1>Your Insurance Portfolio<br><em>Built to Protect</em></h1>
     <p>Tell me about your situation and I'll make sure your coverage is keeping up with your life — no gaps, no surprises, no pressure.</p>
     <div class="hero-actions">
-      <a href="tel:2257666565" class="btn-primary">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.9 10.82 19.79 19.79 0 01.87 2.18 2 2 0 012.86 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-        Call Garrett
-      </a>
-      <a href="#contact" class="btn-outline">
+      <button class="btn-primary" onclick="document.getElementById('chat-section').scrollIntoView({behavior:'smooth'})">
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-        Send a Message
-      </a>
+        Start the Conversation
+      </button>
+      <button class="btn-outline" onclick="openModal()">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        Book a Call
+      </button>
     </div>
   </div>
 </section>
 
 <div class="divider"></div>
 
-<!-- COVERAGE CARDS -->
+<!-- COVERAGE SELECTOR -->
 <section class="section">
   <div class="section-label">What Can I Help With</div>
   <h2 class="section-title">What Are You Looking to Protect?</h2>
-  <p class="section-sub">From your home and vehicles to your farm, business, and family — I'll make sure every angle is covered.</p>
+  <p class="section-sub">Select everything that applies — I'll make sure your portfolio covers every angle.</p>
   <div class="coverage-grid">
-    <div class="coverage-card">
+    <div class="coverage-card" onclick="toggleCard(this)" data-type="Home">
+      <div class="check"></div>
       <div class="card-icon">🏠</div>
       <div class="card-title">Home</div>
       <div class="card-desc">Homeowners, renters, flood &amp; property protection</div>
     </div>
-    <div class="coverage-card">
+    <div class="coverage-card" onclick="toggleCard(this)" data-type="Auto">
+      <div class="check"></div>
       <div class="card-icon">🚗</div>
       <div class="card-title">Auto</div>
       <div class="card-desc">Personal vehicles, liability, comprehensive &amp; collision</div>
     </div>
-    <div class="coverage-card">
+    <div class="coverage-card" onclick="toggleCard(this)" data-type="Life">
+      <div class="check"></div>
       <div class="card-icon">🛡️</div>
       <div class="card-title">Life</div>
       <div class="card-desc">Term, whole life &amp; income protection for your family</div>
     </div>
-    <div class="coverage-card">
+    <div class="coverage-card" onclick="toggleCard(this)" data-type="Farm &amp; Ranch">
+      <div class="check"></div>
       <div class="card-icon">🌾</div>
       <div class="card-title">Farm &amp; Ranch</div>
       <div class="card-desc">Equipment, livestock, land liability &amp; ag operations</div>
     </div>
-    <div class="coverage-card">
+    <div class="coverage-card" onclick="toggleCard(this)" data-type="Business">
+      <div class="check"></div>
       <div class="card-icon">💼</div>
       <div class="card-title">Business</div>
       <div class="card-desc">Commercial property, liability &amp; business owner policies</div>
@@ -434,16 +640,36 @@ footer a:hover { color: var(--gold-light); }
 
 <div class="divider"></div>
 
-<!-- CONTACT STRIP -->
-<div class="contact-strip">
-  <h2>Ready to Talk?</h2>
-  <p>Reach out directly — I personally handle every inquiry.</p>
-  <div class="contact-btns">
-    <a href="tel:2257666565" class="btn-call">📞 Call (225) 766-6565</a>
-    <a href="sms:2257666565" class="btn-text">💬 Text Garrett</a>
-    <a href="https://apps.sfbcic.com/quote-and-buy/?stateCode=LA&producerCode=35762&" target="_blank" class="btn-quote">Get a Quote Online →</a>
+<!-- AI CHAT -->
+<section class="chat-section" id="chat-section">
+  <div class="section" style="padding-bottom:0;">
+    <div class="section-label">Tell Me Your Situation</div>
+    <h2 class="section-title">Let's Find Your Gaps</h2>
+    <p class="section-sub">A quick conversation helps me understand exactly where your coverage stands and what needs attention.</p>
   </div>
-</div>
+  <div style="max-width:700px; margin:0 auto; padding:0 2rem;">
+    <div class="chat-container">
+      <div class="chat-topbar">
+        <div class="avatar">GG</div>
+        <div class="chat-topbar-info">
+          <h4>Garrett's Insurance Assistant</h4>
+          <p>Powered by Louisiana Farm Bureau</p>
+        </div>
+        <div class="online-dot"></div>
+      </div>
+      <div class="chat-messages" id="chat-msgs"></div>
+      <div class="chat-input-wrap">
+        <textarea id="chat-input" placeholder="Type your response..." rows="1"></textarea>
+        <button class="send-btn" id="send-btn" onclick="sendMsg()">
+          <svg width="18" height="18" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2L15 22 11 13 2 9l20-7z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div style="height:3rem;"></div>
+</section>
+
+<div class="divider"></div>
 
 <!-- CONTACT FORM -->
 <section class="section form-section" id="contact">
@@ -452,70 +678,78 @@ footer a:hover { color: var(--gold-light); }
   <p class="section-sub">Fill this out and I'll reach out personally — usually within one business day.</p>
 
   <div id="form-wrap">
-    <form id="contact-form" onsubmit="submitForm(event)">
-      <div class="form-grid">
-        <div class="form-group">
-          <label for="f-first">First Name *</label>
-          <input type="text" id="f-first" name="first_name" placeholder="John" required>
-        </div>
-        <div class="form-group">
-          <label for="f-last">Last Name *</label>
-          <input type="text" id="f-last" name="last_name" placeholder="Smith" required>
-        </div>
-        <div class="form-group">
-          <label for="f-phone">Phone Number *</label>
-          <input type="tel" id="f-phone" name="phone" placeholder="(225) 555-0000" required>
-        </div>
-        <div class="form-group">
-          <label for="f-pref">Call or Text?</label>
-          <select id="f-pref" name="preference">
-            <option value="">Preferred...</option>
-            <option>Call me</option>
-            <option>Text me</option>
-            <option>Either works</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="f-parish">Parish / City</label>
-          <input type="text" id="f-parish" name="parish" placeholder="East Baton Rouge">
-        </div>
-        <div class="form-group">
-          <label for="f-email">Email Address</label>
-          <input type="email" id="f-email" name="email" placeholder="you@example.com">
-        </div>
-        <div class="form-group full">
-          <label>Coverage Interests</label>
-          <div class="coverage-checkboxes">
-            <label class="cb-item"><input type="checkbox" name="coverage" value="Home"> 🏠 Home</label>
-            <label class="cb-item"><input type="checkbox" name="coverage" value="Auto"> 🚗 Auto</label>
-            <label class="cb-item"><input type="checkbox" name="coverage" value="Life"> 🛡️ Life</label>
-            <label class="cb-item"><input type="checkbox" name="coverage" value="Farm & Ranch"> 🌾 Farm &amp; Ranch</label>
-            <label class="cb-item"><input type="checkbox" name="coverage" value="Business"> 💼 Business</label>
-          </div>
-        </div>
-        <div class="form-group full">
-          <label for="f-notes">Tell Me About Your Situation</label>
-          <textarea id="f-notes" name="notes" placeholder="What's going on with your coverage? Any recent life changes, concerns, or questions?"></textarea>
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="f-first">First Name *</label>
+        <input type="text" id="f-first" placeholder="John">
+      </div>
+      <div class="form-group">
+        <label for="f-last">Last Name *</label>
+        <input type="text" id="f-last" placeholder="Smith">
+      </div>
+      <div class="form-group">
+        <label for="f-phone">Phone Number *</label>
+        <input type="tel" id="f-phone" placeholder="(225) 555-0000">
+      </div>
+      <div class="form-group">
+        <label for="f-pref">Call or Text?</label>
+        <select id="f-pref">
+          <option value="">Preferred...</option>
+          <option>Call me</option>
+          <option>Text me</option>
+          <option>Either works</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="f-parish">Parish / City</label>
+        <input type="text" id="f-parish" placeholder="East Baton Rouge">
+      </div>
+      <div class="form-group">
+        <label for="f-contact">Best Way to Reach You</label>
+        <select id="f-contact">
+          <option value="">Select...</option>
+          <option>Phone call</option>
+          <option>Text message</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label>Coverage Interests</label>
+        <div class="coverage-checkboxes">
+          <label class="cb-item"><input type="checkbox" value="Home"> 🏠 Home</label>
+          <label class="cb-item"><input type="checkbox" value="Auto"> 🚗 Auto</label>
+          <label class="cb-item"><input type="checkbox" value="Life"> 🛡️ Life</label>
+          <label class="cb-item"><input type="checkbox" value="Farm &amp; Ranch"> 🌾 Farm &amp; Ranch</label>
+          <label class="cb-item"><input type="checkbox" value="Business"> 💼 Business</label>
         </div>
       </div>
-      <button type="submit" class="submit-btn">
-        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2L15 22 11 13 2 9l20-7z"/></svg>
-        Send My Information to Garrett
-      </button>
-      <p class="form-note">Your information is kept private and never sold. Garrett personally reviews every submission.</p>
-    </form>
+      <div class="form-group full">
+        <label for="f-notes">Tell Me About Your Situation</label>
+        <textarea id="f-notes" placeholder="What's going on with your coverage? Any recent life changes, concerns, or questions?"></textarea>
+      </div>
+    </div>
+    <button class="submit-btn" onclick="submitForm()">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2L15 22 11 13 2 9l20-7z"/></svg>
+      Send My Information to Garrett
+    </button>
+    <p class="form-note">Your information is kept private and never sold. Garrett personally reviews every submission.</p>
   </div>
 
   <div id="form-success" style="display:none; text-align:center; padding:3rem 0;">
     <div style="font-size:52px; margin-bottom:1rem;">✅</div>
     <h3 style="font-family:'Cormorant Garamond',serif; font-size:28px; color:var(--green-deep); margin-bottom:0.75rem;">Got it — I'll reach out soon.</h3>
     <p style="color:var(--text-mid); font-size:15px; font-weight:300; max-width:400px; margin:0 auto 1.5rem;">Garrett personally reviews every submission and typically follows up by call or text the same day.</p>
-    <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+    <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:1.5rem;">
       <a href="tel:2257666565" class="btn-primary" style="text-decoration:none;">📞 Call Garrett</a>
       <a href="sms:2257666565" style="display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:white;padding:14px 28px;border-radius:14px;text-decoration:none;font-weight:600;font-size:15px;">💬 Text Garrett</a>
     </div>
+    <button class="btn-primary" style="margin:0 auto; background:var(--green-mid); border:none; cursor:pointer;" onclick="openModal()">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Book a Review Now
+    </button>
   </div>
 </section>
+
+</main>
 
 <!-- FOOTER -->
 <footer>
@@ -534,7 +768,83 @@ footer a:hover { color: var(--gold-light); }
 
 <div class="toast" id="toast"></div>
 
+<!-- BOOKING MODAL -->
+<div class="modal-overlay" id="modal" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <h3>Schedule a Review</h3>
+        <p>Free 15-minute call or in-person review with Garrett</p>
+      </div>
+      <button class="modal-close" onclick="closeModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div class="cal-nav">
+        <button class="cal-arrow" onclick="changeMonth(-1)">&#8249;</button>
+        <h4 id="cal-month-label"></h4>
+        <button class="cal-arrow" onclick="changeMonth(1)">&#8250;</button>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+
+      <div class="time-section" id="time-section" style="display:none;">
+        <div class="time-label" id="time-label"></div>
+        <div class="time-slots" id="time-slots"></div>
+      </div>
+
+      <div class="booking-form" id="booking-form">
+        <h4>Almost There — Just a Few Details</h4>
+        <div class="booking-summary" id="booking-summary"></div>
+        <div class="form-grid" style="margin-bottom:12px;">
+          <div class="form-group">
+            <label>First Name *</label>
+            <input type="text" id="b-first" placeholder="John">
+          </div>
+          <div class="form-group">
+            <label>Last Name *</label>
+            <input type="text" id="b-last" placeholder="Smith">
+          </div>
+          <div class="form-group">
+            <label>Phone Number *</label>
+            <input type="tel" id="b-phone" placeholder="(225) 555-0000">
+          </div>
+          <div class="form-group">
+            <label>Call or Text?</label>
+            <select id="b-pref">
+              <option value="">Preferred...</option>
+              <option>Call me</option>
+              <option>Text me</option>
+              <option>Either works</option>
+            </select>
+          </div>
+        </div>
+        <button class="book-submit" onclick="confirmBooking()">Confirm My Appointment</button>
+      </div>
+
+      <div class="booking-success" id="booking-success">
+        <div class="success-icon">🗓️</div>
+        <h4>You're Booked!</h4>
+        <p id="booking-confirm-text"></p>
+        <p style="margin-top:10px; font-size:13px;">Garrett will reach out by call or text to confirm. A .ics file has been downloaded — open it to add to your calendar.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
+// ── CONFIG ──────────────────────────────────────────────
+var EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';
+var EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+var EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';
+var AGENT_EMAIL = 'ggardner@sfbcic.com';
+var AGENT_NAME  = 'Garrett Gardner';
+var AGENT_PHONE = '(225) 766-6565';
+
+// Only init EmailJS if real keys are provided
+if (EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+}
+
+// ── TOAST ───────────────────────────────────────────────
 function showToast(msg, dur) {
   dur = dur || 3500;
   var t = document.getElementById('toast');
@@ -543,8 +853,183 @@ function showToast(msg, dur) {
   setTimeout(function() { t.classList.remove('show'); }, dur);
 }
 
-function submitForm(e) {
-  e.preventDefault();
+// ── COVERAGE CARDS ──────────────────────────────────────
+function toggleCard(el) { el.classList.toggle('selected'); }
+
+// ── CHAT ────────────────────────────────────────────────
+var chatHistory = [];
+var chatStarted = false;
+var isBusy = false;
+var chatStep = 0;
+var userName = '';
+
+var STEPS = [
+  {
+    msg: function() { return 'Hey there, welcome! I\'m Garrett\'s insurance assistant. I\'ll ask a couple of quick questions so Garrett can reach out with exactly the right information for your situation. No pressure at all — this takes about 2 minutes.<br><br><strong>First, what\'s your name?</strong>'; },
+    chips: [],
+    next: function(input) { userName = input.split(' ')[0]; return 1; }
+  },
+  {
+    msg: function() { return 'Nice to meet you, ' + userName + '! Are you looking for new coverage, or are you an existing customer wanting to review what you\'ve got?'; },
+    chips: ['Looking for new coverage', 'Existing customer — reviewing my policy', 'Not sure yet'],
+    next: function() { return 2; }
+  },
+  {
+    msg: function() { return 'Got it. What are you mainly looking to protect? Pick everything that applies.'; },
+    chips: ['Home', 'Auto', 'Life', 'Farm & Ranch', 'Business', 'Several of these'],
+    next: function() { return 3; }
+  },
+  {
+    msg: function() { return 'That\'s helpful. Has anything changed recently that might affect your coverage needs?'; },
+    chips: ['New home or property', 'New vehicle', 'New baby or growing family', 'Teen driver added', 'Started a business', 'Nothing major recently'],
+    next: function() { return 4; }
+  },
+  {
+    msg: function() { return 'Quick one — do you know offhand what your current deductible is on your home or auto policy?'; },
+    chips: ['Yes, I know it', 'Roughly, but not exactly', 'Honestly, no idea', "I don't have coverage yet"],
+    next: function(input) { return (input.indexOf('no idea') !== -1 || input.indexOf('Roughly') !== -1) ? 5 : 6; }
+  },
+  {
+    msg: function() { return 'That\'s more common than you\'d think — most people don\'t find out until they file a claim. That\'s exactly the kind of thing a quick portfolio review catches. Garrett can walk you through it in about 15 minutes, completely free.<br><br>Fill out your info below and he\'ll reach out by call or text at your convenience.'; },
+    chips: [],
+    next: function() { return 99; },
+    isEnd: true
+  },
+  {
+    msg: function() { return 'Good to know. One more — do you have an umbrella policy on top of your home and auto, or have you ever talked to anyone about liability limits?'; },
+    chips: ['Yes, I have an umbrella policy', 'No umbrella policy', 'Not sure what that is', 'Want to learn more about it'],
+    next: function(input) { return (input.indexOf('No umbrella') !== -1 || input.indexOf('Not sure') !== -1 || input.indexOf('learn more') !== -1) ? 7 : 8; }
+  },
+  {
+    msg: function() { return 'An umbrella policy is one of the most affordable ways to protect everything you\'ve built — it extends your liability limits well beyond what a standard home or auto policy covers. For most families it costs a few hundred dollars a year and covers millions in liability.<br><br>Garrett can explain exactly whether it makes sense for your situation. Fill out your info below and he\'ll reach out personally.'; },
+    chips: [],
+    next: function() { return 99; },
+    isEnd: true
+  },
+  {
+    msg: function() { return 'Sounds like you\'ve got a solid foundation. Even so, a quick portfolio review with Garrett is worth 15 minutes — life changes fast and small gaps can open up without you noticing.<br><br>Go ahead and fill out your info below and Garrett will reach out by call or text to set something up.'; },
+    chips: [],
+    next: function() { return 99; },
+    isEnd: true
+  }
+];
+
+function getStep(idx) {
+  return STEPS[idx] || STEPS[STEPS.length - 1];
+}
+
+function appendMsg(role, html) {
+  var el = document.getElementById('chat-msgs');
+  var div = document.createElement('div');
+  div.className = 'msg ' + (role === 'assistant' ? 'bot' : 'user');
+  var av = '<div class="msg-av">' + (role === 'assistant' ? 'GG' : 'You') + '</div>';
+  if (role === 'assistant') {
+    div.innerHTML = av + '<div class="msg-bubble">' + html + '</div>';
+  } else {
+    div.innerHTML = '<div class="msg-bubble">' + html + '</div>' + av;
+  }
+  el.appendChild(div);
+  el.scrollTop = el.scrollHeight;
+}
+
+function showTyping() {
+  var el = document.getElementById('chat-msgs');
+  var div = document.createElement('div');
+  div.className = 'typing-wrap';
+  div.id = 'typing';
+  div.innerHTML = '<div class="msg-av">GG</div><div class="typing-dots"><span></span><span></span><span></span></div>';
+  el.appendChild(div);
+  el.scrollTop = el.scrollHeight;
+}
+
+function hideTyping() {
+  var t = document.getElementById('typing');
+  if (t) t.remove();
+}
+
+function addChips(opts) {
+  if (!opts || !opts.length) return;
+  var el = document.getElementById('chat-msgs');
+  var div = document.createElement('div');
+  div.className = 'chips';
+  div.id = 'chips';
+  opts.forEach(function(o) {
+    var b = document.createElement('button');
+    b.className = 'chip';
+    b.textContent = o;
+    b.onclick = function() {
+      var c = document.getElementById('chips');
+      if (c) c.remove();
+      document.getElementById('chat-input').value = o;
+      sendMsg();
+    };
+    div.appendChild(b);
+  });
+  el.appendChild(div);
+  el.scrollTop = el.scrollHeight;
+}
+
+function deliverStep(stepIdx) {
+  var step = getStep(stepIdx);
+  isBusy = true;
+  document.getElementById('send-btn').disabled = true;
+  showTyping();
+  setTimeout(function() {
+    hideTyping();
+    appendMsg('assistant', step.msg());
+    addChips(step.chips);
+    if (step.isEnd) {
+      setTimeout(function() {
+        document.getElementById('contact').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        showToast('✅ Fill out your info below and Garrett will reach out personally');
+      }, 800);
+    }
+    isBusy = false;
+    document.getElementById('send-btn').disabled = false;
+    document.getElementById('chat-input').focus();
+  }, 900 + Math.random() * 400);
+}
+
+function startChat() {
+  if (chatStarted) return;
+  chatStarted = true;
+  chatStep = 0;
+  deliverStep(0);
+}
+
+function sendMsg() {
+  var inp = document.getElementById('chat-input');
+  var txt = inp.value.trim();
+  if (!txt || isBusy) return;
+  inp.value = '';
+  inp.style.height = 'auto';
+  var c = document.getElementById('chips');
+  if (c) c.remove();
+  appendMsg('user', txt.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'));
+  chatHistory.push({ role: 'user', content: txt });
+  var step = getStep(chatStep);
+  chatStep = step.next ? step.next(txt) : 99;
+  deliverStep(chatStep);
+}
+
+var chatObs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) { if (e.isIntersecting) { startChat(); chatObs.disconnect(); } });
+}, { threshold: 0.3 });
+chatObs.observe(document.getElementById('chat-section'));
+
+document.addEventListener('DOMContentLoaded', function() {
+  var inp = document.getElementById('chat-input');
+  inp.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
+  });
+  inp.addEventListener('input', function() {
+    inp.style.height = 'auto';
+    inp.style.height = Math.min(inp.scrollHeight, 110) + 'px';
+  });
+});
+
+// ── CONTACT FORM ────────────────────────────────────────
+function submitForm() {
   var first = document.getElementById('f-first').value.trim();
   var last  = document.getElementById('f-last').value.trim();
   var phone = document.getElementById('f-phone').value.trim();
@@ -554,30 +1039,285 @@ function submitForm(e) {
     return;
   }
 
-  var coverage = Array.from(document.querySelectorAll('input[name="coverage"]:checked'))
+  var coverage = Array.from(document.querySelectorAll('.coverage-checkboxes input:checked'))
     .map(function(c) { return c.value; }).join(', ') || 'Not specified';
 
   var pref   = document.getElementById('f-pref').value;
+  var contact = document.getElementById('f-contact').value;
   var parish = document.getElementById('f-parish').value.trim();
-  var email  = document.getElementById('f-email').value.trim();
   var notes  = document.getElementById('f-notes').value.trim();
 
-  var body = [
-    'Name: ' + first + ' ' + last,
-    'Phone: ' + phone,
-    'Preference: ' + (pref || 'Not specified'),
-    'Parish/City: ' + (parish || 'Not specified'),
-    'Email: ' + (email || 'Not provided'),
-    'Coverage Interests: ' + coverage,
-    'Notes: ' + (notes || 'None'),
-  ].join('%0D%0A');
+  var chatSummary = chatHistory
+    .filter(function(m) { return m.role === 'user'; })
+    .map(function(m) { return m.content; })
+    .join(' | ') || 'No chat responses';
 
-  window.location.href = 'mailto:ggardner@sfbcic.com'
-    + '?subject=' + encodeURIComponent('Insurance Inquiry from ' + first + ' ' + last)
-    + '&body=' + body;
+  var selectedCards = Array.from(document.querySelectorAll('.coverage-card.selected'))
+    .map(function(c) { return c.dataset.type; }).join(', ') || 'None selected';
 
+  var btn = document.querySelector('.submit-btn');
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+
+  var params = {
+    to_email:          AGENT_EMAIL,
+    to_name:           AGENT_NAME,
+    from_name:         first + ' ' + last,
+    phone:             phone,
+    contact_pref:      pref || contact || 'Not specified',
+    parish:            parish || 'Not specified',
+    coverage_selected: selectedCards,
+    coverage_form:     coverage,
+    notes:             notes || 'None',
+    chat_summary:      chatSummary
+  };
+
+  if (EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params)
+      .then(function() { showFormSuccess(); })
+      .catch(function() {
+        btn.textContent = 'Send My Information to Garrett';
+        btn.disabled = false;
+        showToast('⚠️ Could not send — please call Garrett directly at ' + AGENT_PHONE);
+      });
+  } else {
+    // Fallback: mailto
+    var body = [
+      'Name: ' + first + ' ' + last,
+      'Phone: ' + phone,
+      'Preference: ' + (pref || contact || 'Not specified'),
+      'Parish: ' + (parish || 'Not specified'),
+      'Coverage (cards): ' + selectedCards,
+      'Coverage (form): ' + coverage,
+      'Notes: ' + (notes || 'None'),
+      'Chat: ' + chatSummary
+    ].join('%0D%0A');
+    window.location.href = 'mailto:' + AGENT_EMAIL
+      + '?subject=' + encodeURIComponent('Insurance Inquiry from ' + first + ' ' + last)
+      + '&body=' + body;
+    showFormSuccess();
+  }
+}
+
+function showFormSuccess() {
   document.getElementById('form-wrap').style.display = 'none';
   document.getElementById('form-success').style.display = 'block';
+  showToast('✅ Sent! Garrett will be in touch soon.');
+}
+
+// ── CALENDAR ────────────────────────────────────────────
+var WEEKDAY_SLOTS = [
+  { time: '10:00 AM', types: ['Phone Call', 'In Person'] },
+  { time: '1:00 PM',  types: ['Phone Call', 'In Person'] },
+  { time: '2:45 PM',  types: ['Phone Call', 'In Person'] }
+];
+var SAT_SLOTS = [
+  { time: '10:00 AM', types: ['Phone Call'] },
+  { time: '1:00 PM',  types: ['Phone Call'] }
+];
+
+var now = new Date();
+var calYear  = now.getFullYear();
+var calMonth = now.getMonth();
+var selectedDay  = null;
+var selectedSlot = null;
+var selectedType = null;
+
+var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+var DAYS   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+function openModal() {
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  renderCalendar();
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modal')) closeModal();
+}
+
+function changeMonth(dir) {
+  calMonth += dir;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  if (calMonth < 0)  { calMonth = 11; calYear--; }
+  selectedDay = selectedSlot = selectedType = null;
+  document.getElementById('time-section').style.display = 'none';
+  document.getElementById('booking-form').classList.remove('show');
+  document.getElementById('booking-success').classList.remove('show');
+  renderCalendar();
+}
+
+function renderCalendar() {
+  document.getElementById('cal-month-label').textContent = MONTHS[calMonth] + ' ' + calYear;
+  var grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+
+  DAYS.forEach(function(d) {
+    var el = document.createElement('div');
+    el.className = 'cal-day-label';
+    el.textContent = d;
+    grid.appendChild(el);
+  });
+
+  var firstDow = new Date(calYear, calMonth, 1).getDay();
+  var daysIn   = new Date(calYear, calMonth + 1, 0).getDate();
+  var today    = new Date(); today.setHours(0,0,0,0);
+
+  for (var i = 0; i < firstDow; i++) {
+    var empty = document.createElement('div');
+    empty.className = 'cal-day empty';
+    grid.appendChild(empty);
+  }
+
+  for (var d = 1; d <= daysIn; d++) {
+    (function(day) {
+      var date   = new Date(calYear, calMonth, day);
+      var dow    = date.getDay();
+      var isSun  = dow === 0;
+      var isSat  = dow === 6;
+      var isPast = date < today;
+      var isToday = date.getTime() === today.getTime();
+
+      var el = document.createElement('div');
+      el.textContent = day;
+      el.className = 'cal-day';
+
+      if (isPast || isSun) {
+        el.classList.add('disabled');
+      } else {
+        if (isToday) el.classList.add('today');
+        if (selectedDay && selectedDay.getTime() === date.getTime()) el.classList.add('selected');
+        el.onclick = function() { selectDay(date, isSat); };
+      }
+      grid.appendChild(el);
+    })(d);
+  }
+}
+
+function selectDay(date, isSat) {
+  selectedDay = date;
+  selectedSlot = selectedType = null;
+  document.getElementById('booking-form').classList.remove('show');
+  document.getElementById('booking-success').classList.remove('show');
+  renderCalendar();
+
+  var dayName = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  var ts = document.getElementById('time-section');
+  document.getElementById('time-label').textContent = 'Available Times — ' + dayName;
+  var sl = document.getElementById('time-slots');
+  sl.innerHTML = '';
+
+  var slots = isSat ? SAT_SLOTS : WEEKDAY_SLOTS;
+  slots.forEach(function(slot) {
+    slot.types.forEach(function(type) {
+      var div = document.createElement('div');
+      div.className = 'time-slot';
+      div.innerHTML =
+        '<div class="time-slot-info">' +
+          '<span class="time-slot-time">' + slot.time + '</span>' +
+          '<span class="time-slot-type">' + type + '</span>' +
+        '</div>' +
+        '<span class="slot-badge">' + (type === 'In Person' ? 'In Person' : 'Phone') + '</span>';
+      div.onclick = function() { selectSlot(div, slot.time, type); };
+      sl.appendChild(div);
+    });
+  });
+
+  ts.style.display = 'block';
+  ts.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function selectSlot(el, time, type) {
+  document.querySelectorAll('.time-slot').forEach(function(s) { s.classList.remove('selected'); });
+  el.classList.add('selected');
+  selectedSlot = time;
+  selectedType = type;
+  var dayStr = selectedDay.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  document.getElementById('booking-summary').innerHTML = '<strong>' + type + '</strong> · ' + dayStr + ' at ' + time;
+  var bf = document.getElementById('booking-form');
+  bf.classList.add('show');
+  bf.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function confirmBooking() {
+  var first = document.getElementById('b-first').value.trim();
+  var last  = document.getElementById('b-last').value.trim();
+  var phone = document.getElementById('b-phone').value.trim();
+  var pref  = document.getElementById('b-pref').value;
+
+  if (!first || !last || !phone) {
+    showToast('⚠️ Please fill in your name and phone number');
+    return;
+  }
+
+  var dayStr  = selectedDay.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  var apptStr = selectedType + ' on ' + dayStr + ' at ' + selectedSlot;
+
+  var btn = document.querySelector('.book-submit');
+  btn.textContent = 'Confirming...';
+  btn.disabled = true;
+
+  function onSuccess() {
+    generateICS(first, last, dayStr);
+    document.getElementById('booking-form').classList.remove('show');
+    document.getElementById('time-section').style.display = 'none';
+    document.getElementById('booking-success').classList.add('show');
+    document.getElementById('booking-confirm-text').innerHTML =
+      '<strong>' + first + '</strong>, your ' + selectedType.toLowerCase() + ' is set for <strong>' + dayStr + ' at ' + selectedSlot + '</strong>. ' +
+      'Garrett will reach out ' + (pref ? 'by ' + pref.toLowerCase() : 'by call or text') + ' to confirm.<br><br>' +
+      '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px;">' +
+        '<a href="tel:2257666565" style="display:inline-flex;align-items:center;gap:7px;background:var(--green-dark);color:white;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">📞 Call Garrett</a>' +
+        '<a href="sms:2257666565" style="display:inline-flex;align-items:center;gap:7px;background:var(--gold);color:white;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">💬 Text Garrett</a>' +
+      '</div>';
+  }
+
+  var params = {
+    to_email:  AGENT_EMAIL, to_name: AGENT_NAME,
+    from_name: first + ' ' + last, phone: phone,
+    contact_pref: pref || 'Not specified', appointment: apptStr,
+    appt_type: selectedType, appt_date: dayStr, appt_time: selectedSlot
+  };
+
+  if (EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params)
+      .then(onSuccess)
+      .catch(function() {
+        btn.textContent = 'Confirm My Appointment';
+        btn.disabled = false;
+        showToast('⚠️ Could not send — please call Garrett at ' + AGENT_PHONE);
+      });
+  } else {
+    onSuccess();
+  }
+}
+
+function generateICS(first, last, dayStr) {
+  var parts = selectedSlot.replace(/ AM| PM/, '').split(':');
+  var h = parseInt(parts[0]), m = parseInt(parts[1]) || 0;
+  if (selectedSlot.indexOf('PM') !== -1 && h !== 12) h += 12;
+  if (selectedSlot.indexOf('AM') !== -1 && h === 12) h = 0;
+  var start = new Date(selectedDay); start.setHours(h, m, 0, 0);
+  var end   = new Date(start.getTime() + 60 * 60 * 1000);
+  var fmt   = function(dt) { return dt.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,''); };
+  var ics = [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Garrett Gardner Insurance//EN',
+    'BEGIN:VEVENT',
+    'DTSTART:' + fmt(start), 'DTEND:' + fmt(end),
+    'SUMMARY:Insurance Review — ' + selectedType + ' with Garrett Gardner',
+    'DESCRIPTION:' + selectedType + ' with Garrett Gardner\\, Louisiana Farm Bureau Insurance.\\nPhone: ' + AGENT_PHONE,
+    'LOCATION:Louisiana Farm Bureau Insurance',
+    'END:VEVENT', 'END:VCALENDAR'
+  ].join('\r\n');
+  var blob = new Blob([ics], { type: 'text/calendar' });
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href = url; a.download = 'garrett-gardner-appointment.ics'; a.click();
+  URL.revokeObjectURL(url);
 }
 </script>
 
