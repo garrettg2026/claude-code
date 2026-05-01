@@ -145,6 +145,17 @@
       },
       "source": "./plugins/security-guidance",
       "category": "security"
+    },
+    {
+      "name": "farmers-bureau-benefits-guide",
+      "description": "Interactive Louisiana Farm Bureau membership benefits assessment and guide to LFBF advocacy and community programs for all Louisiana citizens",
+      "version": "1.0.0",
+      "author": {
+        "name": "Louisiana Farm Bureau Federation",
+        "email": "info@lfbf.org"
+      },
+      "source": "./plugins/farmers-bureau-benefits-guide",
+      "category": "productivity"
     }
   ]
 }

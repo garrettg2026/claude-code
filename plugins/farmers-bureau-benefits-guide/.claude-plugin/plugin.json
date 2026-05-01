@@ -1,0 +1,21 @@
+{
+  "name": "farmers-bureau-benefits-guide",
+  "version": "1.0.0",
+  "description": "Interactive Louisiana Farm Bureau membership benefits assessment and guide to LFBF advocacy and community programs for all Louisiana citizens",
+  "author": {
+    "name": "Louisiana Farm Bureau Federation",
+    "email": "info@lfbf.org",
+    "url": "https://www.lfbf.org"
+  },
+  "homepage": "https://www.lfbf.org/membership",
+  "license": "MIT",
+  "keywords": [
+    "louisiana",
+    "farm-bureau",
+    "agriculture",
+    "membership",
+    "insurance",
+    "benefits",
+    "advocacy"
+  ]
+}
